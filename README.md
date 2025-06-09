@@ -1,3 +1,16 @@
+
+TODO WS CONTENT:
+- optional: gen/exec 09_typescript exercise
+
+TODO SETUP:
+- branching the content for first day
+- information listing for quick start on wednesday (database information, github repo, vs code extension to install)
+- rework event loop async information (course content)
+- recheck and make content nicer
+
+
+
+
 # NodeJS Workshop
 
 Willkommen zum NodeJS Workshop! Dieser Workshop führt dich durch eine umfassende Reise in die NodeJS-Entwicklung, von grundlegenden Konzepten bis hin zu fortgeschrittenen Implementierungen.

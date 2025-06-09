@@ -1,3 +1,1 @@
-
-
 export const DEFAULT_SEARCH_TERM = "Lincoln";
