@@ -1,5 +1,8 @@
 # NodeJS Workshop
 
+GITHUB: https://github.com/jannkre/nodejs-workshop.git
+
+
 Willkommen zum NodeJS Workshop! Dieser Workshop führt dich durch eine umfassende Reise in die NodeJS-Entwicklung, von grundlegenden Konzepten bis hin zu fortgeschrittenen Implementierungen.
 
 ## Workshop-Struktur
