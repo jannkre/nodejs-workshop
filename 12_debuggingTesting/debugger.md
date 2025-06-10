@@ -8,6 +8,8 @@ Der NodeJS-Debugger ist ein mächtiges Werkzeug zur Fehlersuche und Code-Analyse
 
 ### 1. Über die Kommandozeile
 
+Der Debugger kann direkt über die Kommandozeile gestartet werden. Die Option `--inspect` aktiviert den Debug-Modus, während `--inspect-brk` zusätzlich einen Haltepunkt am Programmstart setzt:
+
 ```bash
 # Debug-Modus starten
 node --inspect app.js
@@ -17,6 +19,8 @@ node --inspect-brk app.js
 ```
 
 ### 2. In VS Code
+
+VS Code bietet eine benutzerfreundliche Debugging-Oberfläche. Die Konfiguration erfolgt über eine JSON-Datei, die die Debug-Einstellungen definiert:
 
 1. Öffne die Debug-Ansicht (Ctrl+Shift+D)
 2. Erstelle eine neue Debug-Konfiguration:
@@ -39,6 +43,8 @@ node --inspect-brk app.js
 
 ### 1. Code-Haltepunkte
 
+Code-Haltepunkte werden direkt im Quellcode gesetzt und ermöglichen es, die Ausführung an bestimmten Stellen zu pausieren. Im folgenden Beispiel werden drei strategische Haltepunkte gesetzt, um die Berechnung eines Gesamtbetrags zu überwachen:
+
 ```javascript
 // Beispiel-Code mit Haltepunkten
 function calculateTotal(items) {
@@ -54,6 +60,8 @@ function calculateTotal(items) {
 
 ### 2. Bedingte Haltepunkte
 
+Bedingte Haltepunkte werden nur ausgelöst, wenn eine bestimmte Bedingung erfüllt ist. Dies ist besonders nützlich, um spezifische Fälle zu untersuchen:
+
 ```javascript
 // Nur wenn total > 1000
 if (total > 1000) {  // Bedingter Haltepunkt
@@ -64,6 +72,8 @@ if (total > 1000) {  // Bedingter Haltepunkt
 ## Debugging-Befehle
 
 ### 1. Grundlegende Befehle
+
+Die Debugger-Konsole bietet verschiedene Befehle zur Steuerung der Programmausführung. Diese Befehle helfen bei der schrittweisen Analyse des Codes:
 
 ```javascript
 // Debugger-Konsole
@@ -76,6 +86,8 @@ debug> out   // Aus Funktion aussteigen
 
 ### 2. Variablen inspizieren
 
+Die Überwachung von Variablen ist ein zentrales Feature des Debuggers. Mit diesen Befehlen können Sie den Wert und die Änderungen von Variablen während der Ausführung verfolgen:
+
 ```javascript
 debug> watch('variableName')  // Variable beobachten
 debug> unwatch('variableName')  // Beobachtung beenden
@@ -85,6 +97,8 @@ debug> exec variableName  // Wert anzeigen
 ## Debugging-Strategien
 
 ### 1. Systematisches Vorgehen
+
+Ein strukturierter Ansatz ist entscheidend für effektives Debugging. Die folgenden Schritte helfen, Probleme systematisch zu identifizieren und zu beheben:
 
 1. **Reproduktion**
    - Fehler konsistent reproduzieren
@@ -99,6 +113,8 @@ debug> exec variableName  // Wert anzeigen
    - Ausführungspfad nachvollziehen
 
 ### 2. Debugging-Techniken
+
+Verschiedene Techniken können kombiniert werden, um Probleme effektiv zu lokalisieren. Hier sind drei gängige Ansätze mit Beispielen:
 
 ```javascript
 // 1. Console.log Strategie
@@ -122,6 +138,8 @@ try {
 
 ### 3. Debugger-Statement im Code
 
+Das `debugger`-Statement bietet eine programmatische Möglichkeit, Haltepunkte zu setzen. Es ist besonders nützlich für bedingtes Debugging:
+
 ```javascript
 function calculateTotal(items) {
     let total = 0;
@@ -142,6 +160,8 @@ function calculateTotal(items) {
 ## VS Code Debugging
 
 ### 1. Launch-Konfigurationen
+
+VS Code ermöglicht verschiedene Debugging-Konfigurationen. Diese JSON-Konfiguration definiert zwei gängige Szenarien: das Debuggen der aktuellen Datei und das Anhängen an einen laufenden Prozess:
 
 ```json
 {
@@ -165,59 +185,12 @@ function calculateTotal(items) {
 
 ### 2. Debugging-Features
 
+VS Code bietet eine umfangreiche Palette an Debugging-Features. Diese Tools helfen bei der detaillierten Analyse des Programmablaufs:
+
 - **Watch**: Variablen überwachen
 - **Call Stack**: Aufrufstapel analysieren
 - **Breakpoints**: Haltepunkte verwalten
 - **Variables**: Variablenwerte inspizieren
-
-## Übung
-
-Debugge den folgenden Code und finde den Fehler:
-
-```javascript
-function processUserData(user) {
-    let result = {};
-    
-    // Fehlerhafte Logik
-    result.name = user.name;
-    result.age = user.age;
-    result.address = user.address.street;  // Möglicher Fehler
-    
-    return result;
-}
-
-// Test-Daten
-const user = {
-    name: "Max",
-    age: 25
-    // address fehlt
-};
-
-// Ausführung
-const processed = processUserData(user);
-console.log(processed);
-```
-
-Lösung:
-
-```javascript
-function processUserData(user) {
-    let result = {};
-    
-    // Sichere Verarbeitung
-    result.name = user.name;
-    result.age = user.age;
-    
-    // Null-Check für address
-    if (user.address) {
-        result.address = user.address.street;
-    } else {
-        result.address = 'Keine Adresse verfügbar';
-    }
-    
-    return result;
-}
-```
 
 ## Best Practices
 

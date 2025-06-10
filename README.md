@@ -2,11 +2,8 @@
 TODO WS CONTENT:
 - branching the content for first day
 - information listing for quick start on wednesday (database information, github repo, vs code extension to install)
-- rework event loop async information (course content) (wieviele worker werden zugewiesen und wie funktionert das mit memory, etc.)
-- recheck and make content nicer
-- content include .env files
-- optional: gen/exec 09_typescript exercise
 
+- optional: gen/exec 09_typescript exercise
 
 
 # NodeJS Workshop

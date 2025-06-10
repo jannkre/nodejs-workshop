@@ -10,9 +10,51 @@ In diesem Modul lernst du, wie man das Model-View-Controller (MVC) Pattern in Ex
 - Models für Datenlogik entwickeln
 - Views mit Controllern verbinden
 
+## MVC-Architektur
+
+Das folgende Diagramm zeigt die grundlegende Struktur einer MVC-Anwendung. Es verdeutlicht die Kommunikation zwischen Client und Server sowie die internen Beziehungen der MVC-Komponenten:
+
+```mermaid
+graph TD
+    subgraph "Client"
+        A[Browser] -->|HTTP Request| B[Express Server]
+        B -->|HTTP Response| A
+    end
+
+    subgraph "Server"
+        B -->|Route| C[Router]
+        C -->|Delegate| D[Controller]
+        
+        subgraph "MVC Pattern"
+            D -->|Read/Write| E[Model]
+            D -->|Render| F[View]
+            E -->|Data| D
+            F -->|Template| D
+        end
+        
+        subgraph "Project Structure"
+            G[src/] --> H[controllers/]
+            G --> I[models/]
+            G --> J[views/]
+            G --> K[routes/]
+            G --> L[app.js]
+        end
+    end
+
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style B fill:#bbf,stroke:#333,stroke-width:2px
+    style C fill:#bfb,stroke:#333,stroke-width:2px
+    style D fill:#fbb,stroke:#333,stroke-width:2px
+    style E fill:#bfb,stroke:#333,stroke-width:2px
+    style F fill:#bfb,stroke:#333,stroke-width:2px
+    style G fill:#ddd,stroke:#333,stroke-width:2px
+```
+
 ## MVC-Grundlagen
 
 ### Projektstruktur
+
+Eine gut organisierte Projektstruktur ist entscheidend für die Wartbarkeit einer MVC-Anwendung. Die folgende Struktur trennt klar die verschiedenen Komponenten und folgt bewährten Praktiken:
 
 ```
 src/
@@ -34,6 +76,8 @@ src/
 ## Controller-Implementierung
 
 ### User Controller
+
+Der User Controller ist ein Beispiel für die Implementierung der CRUD-Operationen (Create, Read, Update, Delete). Er zeigt, wie Requests verarbeitet und mit dem Model und der View interagiert wird:
 
 ```javascript
 // controllers/userController.js
@@ -105,6 +149,8 @@ export class UserController {
 
 ### User Routes
 
+Die Router-Konfiguration definiert die API-Endpunkte und verbindet sie mit den entsprechenden Controller-Methoden. Hier sehen wir ein Beispiel für RESTful Routes:
+
 ```javascript
 // routes/userRoutes.js
 import express from 'express';
@@ -126,6 +172,8 @@ export default router;
 ```
 
 ### App.js Integration
+
+Die Hauptanwendungsdatei (app.js) ist der Einstiegspunkt der Anwendung. Sie konfiguriert Middleware, View-Engine und verbindet alle Komponenten:
 
 ```javascript
 // app.js
@@ -158,6 +206,8 @@ app.use((err, req, res, next) => {
 ## Model-Entwicklung
 
 ### User Model
+
+Das User Model kapselt die Datenlogik und Datenbankoperationen. Es bietet eine saubere Schnittstelle für den Controller:
 
 ```javascript
 // models/userModel.js
@@ -192,6 +242,8 @@ export class UserModel {
 ## View-Integration
 
 ### User Views
+
+Die Views sind für die Darstellung der Daten zuständig. Hier sehen wir ein Beispiel für eine EJS-Template-Datei, die Benutzerdaten in einer Tabelle anzeigt:
 
 ```ejs
 <!-- views/users/index.ejs -->

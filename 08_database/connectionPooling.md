@@ -264,7 +264,3 @@ async function workerMain() {
 
 workerMain();
 ```
-
-## Nächste Schritte
-
-Nachdem du die Details des Connection Poolings kennengelernt hast, kannst du mit dem [MySQL Integration](mysql.md) Modul fortfahren, um die grundlegende Datenbankintegration zu lernen. 

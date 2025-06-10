@@ -1,31 +1,72 @@
-# MongoDB Integration in NodeJS
+# MongoDB Integration in NodeJS mit Mongoose
 
-In diesem Abschnitt lernst du, wie man NodeJS-Anwendungen mit MongoDB verbindet und interagiert.
+In diesem Abschnitt lernst du, wie man NodeJS-Anwendungen mit MongoDB unter Verwendung von Mongoose verbindet und interagiert.
+
+## SQL vs. NoSQL: Ein Vergleich
+
+### Vergleichstabelle
+
+| Aspekt | SQL (MySQL) | NoSQL (MongoDB) |
+|--------|-------------|-----------------|
+| Datenmodell | Tabellarisch, festes Schema | Dokumentenorientiert, flexibles Schema |
+| Skalierung | Vertikal (mehr Leistung pro Server) | Horizontal (mehr Server) |
+| Transaktionen | ACID-konform, vollständige Transaktionsunterstützung | Eventual Consistency, begrenzte Transaktionsunterstützung |
+| Abfragen | SQL, komplexe Joins | Dokumentenabfragen, Aggregation Pipeline |
+| Schema | Vorab definiert, Änderungen erfordern Migration | Flexibel, Schema-Validierung optional |
+| Indizierung | Primär- und Sekundärindizes | Mehrere Indextypen (einfach, zusammengesetzt, text) |
+| Datenintegrität | Referenzielle Integrität durch Fremdschlüssel | Keine eingebaute referenzielle Integrität |
+| Einsatzgebiete | Komplexe Beziehungen, Transaktionen | Große Datenmengen, schnelle Skalierung |
+| Performance | Optimiert für komplexe Abfragen | Optimiert für Lese- und Schreiboperationen |
+
+### Wann welche Datenbank?
+
+**MySQL ist ideal für:**
+- Anwendungen mit komplexen Beziehungen
+- Systeme, die ACID-Transaktionen benötigen
+- Projekte mit festem Datenmodell
+- Finanzielle Anwendungen
+- Reporting-Systeme
+
+**MongoDB ist ideal für:**
+- Skalierbare Webanwendungen
+- Echtzeit-Analysen
+- Content Management Systeme
+- Mobile Anwendungen
+- IoT-Daten
 
 ## Lernziele
 
-- MongoDB-Verbindung herstellen
+- Mongoose-Verbindung herstellen
+- Schemas und Modelle definieren
 - CRUD-Operationen ausführen
-- Aggregationen durchführen
+- Middleware verwenden
+- Validierung implementieren
 - Indizes erstellen
 - Fehlerbehandlung implementieren
 
 ## Grundlegende Verbindung
 
 ### Verbindung herstellen
+
+Die Verbindung zu MongoDB wird über Mongoose hergestellt. Im Gegensatz zum nativen MongoDB-Treiber bietet Mongoose zusätzliche Konfigurationsmöglichkeiten und eine bessere Fehlerbehandlung:
+
 ```javascript
-import { MongoClient } from 'mongodb';
+import mongoose from 'mongoose';
 
 // Verbindungs-URI
-const uri = 'mongodb://localhost:27017';
-const client = new MongoClient(uri);
+const uri = 'mongodb://localhost:27017/meine_datenbank';
+
+// Verbindungsoptionen
+const options = {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+};
 
 // Verbindung herstellen
 async function connect() {
     try {
-        await client.connect();
-        console.log('Verbunden mit MongoDB');
-        return client.db('meine_datenbank');
+        await mongoose.connect(uri, options);
+        console.log('Verbunden mit MongoDB über Mongoose');
     } catch (err) {
         console.error('Verbindungsfehler:', err);
         throw err;
@@ -35,7 +76,7 @@ async function connect() {
 // Verbindung schließen
 async function close() {
     try {
-        await client.close();
+        await mongoose.connection.close();
         console.log('Verbindung geschlossen');
     } catch (err) {
         console.error('Fehler beim Schließen:', err);
@@ -44,148 +85,217 @@ async function close() {
 }
 ```
 
+## Schemas und Modelle
+
+### Benutzer-Schema definieren
+
+Ein Mongoose-Schema definiert die Struktur und Validierungsregeln für Dokumente. Hier sehen wir ein umfassendes Beispiel mit verschiedenen Feldtypen, Validierungen und Middleware:
+
+```javascript
+import mongoose from 'mongoose';
+
+// Schema definieren
+const benutzerSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        required: [true, 'Name ist erforderlich'],
+        trim: true
+    },
+    email: {
+        type: String,
+        required: [true, 'Email ist erforderlich'],
+        unique: true,
+        lowercase: true,
+        trim: true,
+        validate: {
+            validator: function(v) {
+                return /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(v);
+            },
+            message: props => `${props.value} ist keine gültige Email-Adresse!`
+        }
+    },
+    alter: {
+        type: Number,
+        min: [0, 'Alter kann nicht negativ sein'],
+        max: [120, 'Alter scheint ungültig']
+    },
+    rolle: {
+        type: String,
+        enum: ['benutzer', 'admin', 'moderator'],
+        default: 'benutzer'
+    },
+    erstellt: {
+        type: Date,
+        default: Date.now
+    },
+    aktiv: {
+        type: Boolean,
+        default: true
+    }
+}, {
+    timestamps: true // Fügt createdAt und updatedAt hinzu
+});
+
+// Indizes
+benutzerSchema.index({ email: 1 }, { unique: true });
+benutzerSchema.index({ name: 1, erstellt: -1 });
+
+// Virtuelle Eigenschaften
+benutzerSchema.virtual('vollständigerName').get(function() {
+    return `${this.name} (${this.email})`;
+});
+
+// Middleware
+benutzerSchema.pre('save', function(next) {
+    console.log('Speichere Benutzer...');
+    next();
+});
+
+benutzerSchema.post('save', function(doc) {
+    console.log('Benutzer gespeichert:', doc.name);
+});
+
+// Statische Methoden
+benutzerSchema.statics.findByEmail = function(email) {
+    return this.findOne({ email: email.toLowerCase() });
+};
+
+// Instanzmethoden
+benutzerSchema.methods.isAdmin = function() {
+    return this.rolle === 'admin';
+};
+
+// Modell erstellen
+const Benutzer = mongoose.model('Benutzer', benutzerSchema);
+```
+
 ## CRUD-Operationen
 
 ### Create (Insert)
+
+Das Erstellen neuer Dokumente erfolgt über Mongoose-Modelle. Die Schema-Validierung wird automatisch durchgeführt, bevor das Dokument in der Datenbank gespeichert wird:
+
 ```javascript
-async function createBenutzer(benutzer) {
-    const db = await connect();
+async function createBenutzer(benutzerDaten) {
     try {
-        const result = await db.collection('benutzer').insertOne(benutzer);
-        return result.insertedId;
+        const benutzer = new Benutzer(benutzerDaten);
+        await benutzer.save();
+        return benutzer;
     } catch (err) {
         console.error('Fehler beim Erstellen:', err);
         throw err;
-    } finally {
-        await close();
     }
 }
 
 // Mehrere Dokumente einfügen
-async function createVieleBenutzer(benutzer) {
-    const db = await connect();
+async function createVieleBenutzer(benutzerArray) {
     try {
-        const result = await db.collection('benutzer').insertMany(benutzer);
-        return result.insertedIds;
+        return await Benutzer.insertMany(benutzerArray);
     } catch (err) {
         console.error('Fehler beim Erstellen:', err);
         throw err;
-    } finally {
-        await close();
     }
 }
 ```
 
 ### Read (Find)
+
+Mongoose bietet verschiedene Methoden zum Abrufen von Dokumenten. Die Beispiele zeigen unterschiedliche Abfrageoptionen wie Projektion, Sortierung und Verknüpfungen:
+
 ```javascript
 async function getBenutzer(filter = {}) {
-    const db = await connect();
     try {
-        return await db.collection('benutzer').find(filter).toArray();
+        return await Benutzer.find(filter);
     } catch (err) {
         console.error('Fehler beim Abrufen:', err);
         throw err;
-    } finally {
-        await close();
     }
 }
 
-// Mit Projektion
-async function getBenutzerMitProjektion() {
-    const db = await connect();
-    try {
-        return await db.collection('benutzer')
-            .find({})
-            .project({ name: 1, email: 1, _id: 0 })
-            .toArray();
-    } catch (err) {
-        console.error('Fehler beim Abrufen:', err);
-        throw err;
-    } finally {
-        await close();
-    }
-}
-
-// Mit Sortierung und Limit
+// Mit Projektion und Sortierung
 async function getNeuesteBenutzer(limit = 10) {
-    const db = await connect();
     try {
-        return await db.collection('benutzer')
-            .find({})
+        return await Benutzer.find()
+            .select('name email erstellt') // Projektion
             .sort({ erstellt: -1 })
-            .limit(limit)
-            .toArray();
+            .limit(limit);
     } catch (err) {
         console.error('Fehler beim Abrufen:', err);
         throw err;
-    } finally {
-        await close();
+    }
+}
+
+// Mit Populate
+async function getBenutzerMitAktivitaeten() {
+    try {
+        return await Benutzer.find()
+            .populate('aktivitaeten')
+            .exec();
+    } catch (err) {
+        console.error('Fehler beim Abrufen:', err);
+        throw err;
     }
 }
 ```
 
 ### Update
+
+Aktualisierungen können mit verschiedenen Mongoose-Methoden durchgeführt werden. Die Option `runValidators: true` stellt sicher, dass die Schema-Validierung auch bei Updates durchgeführt wird:
+
 ```javascript
 async function updateBenutzer(id, update) {
-    const db = await connect();
     try {
-        const result = await db.collection('benutzer').updateOne(
-            { _id: id },
-            { $set: update }
+        const benutzer = await Benutzer.findByIdAndUpdate(
+            id,
+            { $set: update },
+            { new: true, runValidators: true }
         );
-        return result.modifiedCount > 0;
+        return benutzer;
     } catch (err) {
         console.error('Fehler beim Aktualisieren:', err);
         throw err;
-    } finally {
-        await close();
     }
 }
 
 // Mehrere Dokumente aktualisieren
 async function updateVieleBenutzer(filter, update) {
-    const db = await connect();
     try {
-        const result = await db.collection('benutzer').updateMany(
+        const result = await Benutzer.updateMany(
             filter,
-            { $set: update }
+            { $set: update },
+            { runValidators: true }
         );
         return result.modifiedCount;
     } catch (err) {
         console.error('Fehler beim Aktualisieren:', err);
         throw err;
-    } finally {
-        await close();
     }
 }
 ```
 
 ### Delete
+
+Das Löschen von Dokumenten kann einzeln oder in größeren Mengen erfolgen. Mongoose bietet spezielle Methoden wie `findByIdAndDelete` für häufige Anwendungsfälle:
+
 ```javascript
 async function deleteBenutzer(id) {
-    const db = await connect();
     try {
-        const result = await db.collection('benutzer').deleteOne({ _id: id });
-        return result.deletedCount > 0;
+        const result = await Benutzer.findByIdAndDelete(id);
+        return result !== null;
     } catch (err) {
         console.error('Fehler beim Löschen:', err);
         throw err;
-    } finally {
-        await close();
     }
 }
 
 // Mehrere Dokumente löschen
 async function deleteVieleBenutzer(filter) {
-    const db = await connect();
     try {
-        const result = await db.collection('benutzer').deleteMany(filter);
+        const result = await Benutzer.deleteMany(filter);
         return result.deletedCount;
     } catch (err) {
         console.error('Fehler beim Löschen:', err);
         throw err;
-    } finally {
-        await close();
     }
 }
 ```
@@ -193,11 +303,13 @@ async function deleteVieleBenutzer(filter) {
 ## Aggregationen
 
 ### Einfache Aggregation
+
+Mongoose unterstützt die MongoDB-Aggregationspipeline. Hier sehen wir ein Beispiel für die Berechnung von Statistiken über Benutzer:
+
 ```javascript
 async function getBenutzerStatistiken() {
-    const db = await connect();
     try {
-        return await db.collection('benutzer').aggregate([
+        return await Benutzer.aggregate([
             {
                 $group: {
                     _id: '$rolle',
@@ -205,76 +317,10 @@ async function getBenutzerStatistiken() {
                     durchschnittsalter: { $avg: '$alter' }
                 }
             }
-        ]).toArray();
+        ]);
     } catch (err) {
         console.error('Fehler bei der Aggregation:', err);
         throw err;
-    } finally {
-        await close();
-    }
-}
-```
-
-### Komplexe Aggregation
-```javascript
-async function getBenutzerAktivitaet() {
-    const db = await connect();
-    try {
-        return await db.collection('benutzer').aggregate([
-            {
-                $lookup: {
-                    from: 'aktivitaeten',
-                    localField: '_id',
-                    foreignField: 'benutzerId',
-                    as: 'aktivitaeten'
-                }
-            },
-            {
-                $project: {
-                    name: 1,
-                    anzahlAktivitaeten: { $size: '$aktivitaeten' },
-                    letzteAktivitaet: { $max: '$aktivitaeten.datum' }
-                }
-            },
-            {
-                $sort: { anzahlAktivitaeten: -1 }
-            }
-        ]).toArray();
-    } catch (err) {
-        console.error('Fehler bei der Aggregation:', err);
-        throw err;
-    } finally {
-        await close();
-    }
-}
-```
-
-## Indizes
-
-### Indizes erstellen
-```javascript
-async function createIndizes() {
-    const db = await connect();
-    try {
-        // Einfacher Index
-        await db.collection('benutzer').createIndex({ email: 1 }, { unique: true });
-        
-        // Zusammengesetzter Index
-        await db.collection('benutzer').createIndex(
-            { name: 1, erstellt: -1 }
-        );
-        
-        // Text-Index
-        await db.collection('benutzer').createIndex(
-            { beschreibung: 'text' }
-        );
-        
-        console.log('Indizes erstellt');
-    } catch (err) {
-        console.error('Fehler beim Erstellen der Indizes:', err);
-        throw err;
-    } finally {
-        await close();
     }
 }
 ```
@@ -282,109 +328,113 @@ async function createIndizes() {
 ## Best Practices
 
 ### Verbindungsmanagement
-- Verbindungen wiederverwenden
-- Verbindungen nach Gebrauch schließen
+
+Effizientes Verbindungsmanagement ist entscheidend für die Performance und Stabilität der Anwendung:
+
+- Mongoose-Verbindung wiederverwenden
+- Verbindung nach Gebrauch schließen
 - Fehlerbehandlung implementieren
 - Timeouts konfigurieren
 
 ### Performance
+
+Die Performance kann durch verschiedene Mongoose-spezifische Optimierungen verbessert werden:
+
 - Indizes für häufige Abfragen
-- Projektionen für große Dokumente
-- Aggregationen optimieren
+- Lean-Queries für große Datensätze
+- Populate mit Bedacht verwenden
 - Batch-Operationen nutzen
 
 ### Sicherheit
+
+Sicherheit ist ein kritischer Aspekt bei der Datenbankanbindung. Mongoose bietet eingebaute Sicherheitsfeatures:
+
 - Verbindungsdaten sicher speichern
 - Benutzerrechte einschränken
-- Validierung implementieren
+- Schema-Validierung nutzen
 - Fehler nicht nach außen geben
 
 ## Beispiel: Benutzerverwaltung
 
+Hier sehen wir eine vollständige Implementierung einer Benutzerverwaltung mit Mongoose. Die Klasse demonstriert die praktische Anwendung aller zuvor besprochenen Konzepte:
+
 ```javascript
-import { MongoClient, ObjectId } from 'mongodb';
+import mongoose from 'mongoose';
 
 class BenutzerManager {
     constructor() {
-        this.uri = 'mongodb://localhost:27017';
-        this.client = new MongoClient(this.uri);
-        this.dbName = 'benutzer_db';
+        this.uri = 'mongodb://localhost:27017/benutzer_db';
+        this.options = {
+            useNewUrlParser: true,
+            useUnifiedTopology: true
+        };
     }
     
     async connect() {
-        await this.client.connect();
-        return this.client.db(this.dbName);
+        try {
+            await mongoose.connect(this.uri, this.options);
+            console.log('Verbunden mit MongoDB');
+        } catch (err) {
+            console.error('Verbindungsfehler:', err);
+            throw err;
+        }
     }
     
     async close() {
-        await this.client.close();
+        try {
+            await mongoose.connection.close();
+            console.log('Verbindung geschlossen');
+        } catch (err) {
+            console.error('Fehler beim Schließen:', err);
+            throw err;
+        }
     }
     
-    async createBenutzer(benutzer) {
-        const db = await this.connect();
+    async createBenutzer(benutzerDaten) {
         try {
-            const result = await db.collection('benutzer').insertOne({
-                ...benutzer,
-                erstellt: new Date()
-            });
-            return result.insertedId;
+            const benutzer = new Benutzer(benutzerDaten);
+            await benutzer.save();
+            return benutzer;
         } catch (err) {
             console.error('Fehler beim Erstellen:', err);
             throw err;
-        } finally {
-            await this.close();
         }
     }
     
     async getBenutzer(id) {
-        const db = await this.connect();
         try {
-            return await db.collection('benutzer').findOne(
-                { _id: new ObjectId(id) }
-            );
+            return await Benutzer.findById(id);
         } catch (err) {
             console.error('Fehler beim Abrufen:', err);
             throw err;
-        } finally {
-            await this.close();
         }
     }
     
     async updateBenutzer(id, update) {
-        const db = await this.connect();
         try {
-            const result = await db.collection('benutzer').updateOne(
-                { _id: new ObjectId(id) },
-                { $set: { ...update, aktualisiert: new Date() } }
+            return await Benutzer.findByIdAndUpdate(
+                id,
+                { $set: update },
+                { new: true, runValidators: true }
             );
-            return result.modifiedCount > 0;
         } catch (err) {
             console.error('Fehler beim Aktualisieren:', err);
             throw err;
-        } finally {
-            await this.close();
         }
     }
     
     async deleteBenutzer(id) {
-        const db = await this.connect();
         try {
-            const result = await db.collection('benutzer').deleteOne(
-                { _id: new ObjectId(id) }
-            );
-            return result.deletedCount > 0;
+            return await Benutzer.findByIdAndDelete(id);
         } catch (err) {
             console.error('Fehler beim Löschen:', err);
             throw err;
-        } finally {
-            await this.close();
         }
     }
     
     async getBenutzerStatistiken() {
-        const db = await this.connect();
         try {
-            return await db.collection('benutzer').aggregate([
+            return await Benutzer.aggregate([
                 {
                     $group: {
                         _id: '$rolle',
@@ -392,12 +442,10 @@ class BenutzerManager {
                         durchschnittsalter: { $avg: '$alter' }
                     }
                 }
-            ]).toArray();
+            ]);
         } catch (err) {
             console.error('Fehler bei der Aggregation:', err);
             throw err;
-        } finally {
-            await this.close();
         }
     }
 }
@@ -407,14 +455,19 @@ const benutzerManager = new BenutzerManager();
 
 // Beispiel: Benutzer erstellen
 try {
-    const benutzerId = await benutzerManager.createBenutzer({
+    await benutzerManager.connect();
+    
+    const benutzer = await benutzerManager.createBenutzer({
         name: 'Max Mustermann',
         email: 'max@example.com',
         alter: 30,
         rolle: 'benutzer'
     });
-    console.log('Benutzer erstellt mit ID:', benutzerId);
+    
+    console.log('Benutzer erstellt:', benutzer);
 } catch (err) {
     console.error('Fehler:', err);
+} finally {
+    await benutzerManager.close();
 }
 ```

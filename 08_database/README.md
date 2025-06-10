@@ -20,8 +20,6 @@ In diesem Modul lernst du, wie man NodeJS-Anwendungen mit verschiedenen Datenban
 
 - Grundkenntnisse in SQL
 - Verständnis von NoSQL-Konzepten
-- Erfahrung mit asynchroner Programmierung
-- Kenntnisse in Datenbankdesign
 
 ## Nächste Schritte
 

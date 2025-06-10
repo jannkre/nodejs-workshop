@@ -12,12 +12,16 @@ In diesem Abschnitt lernst du die moderne Promise-basierte asynchrone Programmie
 ## Grundkonzepte
 
 ### Was sind Promises?
+Promises sind ein grundlegendes Konzept in der modernen JavaScript-Programmierung. Sie bieten eine elegantere Alternative zu Callbacks und machen asynchronen Code besser lesbar und wartbar.
+
 - Objekte, die einen zukünftigen Wert repräsentieren
 - Drei Zustände: pending, fulfilled, rejected
 - Bessere Lesbarkeit als Callbacks
 - Standardisierte Fehlerbehandlung
 
 ### Promise-States
+Ein Promise durchläuft verschiedene Zustände während seines Lebenszyklus. Hier ein Beispiel, das die grundlegende Struktur eines Promises zeigt:
+
 ```javascript
 const promise = new Promise((resolve, reject) => {
     // Asynchrone Operation
@@ -32,6 +36,8 @@ const promise = new Promise((resolve, reject) => {
 ## Promise-Verwendung
 
 ### Einfache Promises
+Die einfachste Form der Promise-Verwendung zeigt dieses Beispiel mit dem Dateisystem. Promises machen den Code flacher und vermeiden die "Callback-Hölle":
+
 ```javascript
 const fs = require('fs').promises;
 
@@ -45,6 +51,8 @@ fs.readFile('datei.txt')
 ```
 
 ### Promise-Ketten
+Promise-Ketten ermöglichen es, mehrere asynchrone Operationen nacheinander auszuführen. Jeder Schritt wartet auf den Abschluss des vorherigen, was den Code übersichtlich und wartbar macht:
+
 ```javascript
 fs.readFile('datei1.txt')
     .then(data1 => {
@@ -64,6 +72,8 @@ fs.readFile('datei1.txt')
 ## Promise-Methoden
 
 ### Promise.all
+`Promise.all` ist besonders nützlich, wenn mehrere asynchrone Operationen parallel ausgeführt werden sollen. Es wartet, bis alle Promises erfüllt sind, oder bricht ab, sobald ein Promise fehlschlägt:
+
 ```javascript
 Promise.all([
     fs.readFile('datei1.txt'),
@@ -78,6 +88,8 @@ Promise.all([
 ```
 
 ### Promise.race
+`Promise.race` ist nützlich, wenn nur die erste abgeschlossene Operation relevant ist. Es eignet sich gut für Timeouts oder wenn mehrere Quellen für die gleichen Daten existieren:
+
 ```javascript
 Promise.race([
     fetch('api1'),
@@ -94,6 +106,8 @@ Promise.race([
 ## Fehlerbehandlung
 
 ### Try-Catch mit Promises
+Die Kombination von async/await mit try-catch macht die Fehlerbehandlung besonders elegant und ähnlich der synchronen Programmierung:
+
 ```javascript
 async function beispiel() {
     try {
@@ -106,6 +120,8 @@ async function beispiel() {
 ```
 
 ### Fehlerweitergabe
+In Promise-Ketten können Fehler elegant weitergegeben werden. Der erste catch-Block in der Kette fängt alle Fehler ab:
+
 ```javascript
 fs.readFile('datei.txt')
     .then(data => {
@@ -122,18 +138,24 @@ fs.readFile('datei.txt')
 ## Best Practices
 
 ### Promise-Erstellung
+Bei der Erstellung von Promises gibt es einige wichtige Regeln zu beachten, um Probleme zu vermeiden:
+
 - Promises nur einmal erstellen
 - Keine verschachtelten Promises
 - Reject mit Error-Objekten
 - Keine synchronen Operationen in Promises
 
 ### Fehlerbehandlung
+Eine gute Fehlerbehandlung ist entscheidend für robuste Anwendungen:
+
 - Immer .catch() verwenden
 - Fehler nicht verschlucken
 - Aussagekräftige Fehlermeldungen
 - Fehlerweitergabe wenn nötig
 
 ### Performance
+Die Performance von Promise-basierten Anwendungen kann durch folgende Praktiken optimiert werden:
+
 - Promise.all für parallele Operationen
 - Unnötige Promise-Ketten vermeiden
 - Memory Leaks verhindern
@@ -142,6 +164,8 @@ fs.readFile('datei.txt')
 ## Von Callbacks zu Promises
 
 ### Callback zu Promise konvertieren
+Manchmal müssen ältere Callback-basierte APIs in Promises umgewandelt werden. Hier ein Beispiel für die manuelle Konvertierung:
+
 ```javascript
 function readFilePromise(path) {
     return new Promise((resolve, reject) => {
@@ -154,6 +178,8 @@ function readFilePromise(path) {
 ```
 
 ### Promisify
+Node.js bietet mit `util.promisify` eine elegante Lösung, um Callback-basierte Funktionen in Promise-basierte zu konvertieren:
+
 ```javascript
 const util = require('util');
 const readFilePromise = util.promisify(fs.readFile);

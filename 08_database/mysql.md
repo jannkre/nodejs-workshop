@@ -13,6 +13,9 @@ In diesem Abschnitt lernst du, wie man NodeJS-Anwendungen mit MySQL-Datenbanken 
 ## Grundlegende Verbindung
 
 ### Einfache Verbindung
+
+Die einfachste Form der MySQL-Verbindung in Node.js verwendet eine einzelne Verbindung. Hier sehen wir, wie man eine Verbindung herstellt und eine einfache Abfrage ausführt:
+
 ```javascript
 import mysql from 'mysql2/promise';
 
@@ -38,6 +41,9 @@ try {
 ## Connection Pooling
 
 ### Pool erstellen
+
+Connection Pooling ist eine effiziente Methode zur Verwaltung mehrerer Datenbankverbindungen. Der folgende Code zeigt, wie man einen Connection Pool erstellt und konfiguriert:
+
 ```javascript
 import mysql from 'mysql2/promise';
 
@@ -70,6 +76,9 @@ async function getBenutzer(id) {
 ## CRUD-Operationen
 
 ### Create (INSERT)
+
+Das Einfügen neuer Datensätze in die Datenbank ist eine grundlegende Operation. Hier sehen wir, wie man einen neuen Benutzer in die Datenbank einfügt:
+
 ```javascript
 async function createBenutzer(benutzer) {
     try {
@@ -86,6 +95,9 @@ async function createBenutzer(benutzer) {
 ```
 
 ### Read (SELECT)
+
+Das Abrufen von Daten aus der Datenbank kann auf verschiedene Arten erfolgen. Hier sind Beispiele für einfache und gefilterte Abfragen:
+
 ```javascript
 async function getAlleBenutzer() {
     try {
@@ -112,6 +124,9 @@ async function getBenutzerMitFilter(filter) {
 ```
 
 ### Update
+
+Das Aktualisieren bestehender Datensätze erfordert eine sorgfältige Fehlerbehandlung. Hier sehen wir, wie man Benutzerdaten sicher aktualisiert:
+
 ```javascript
 async function updateBenutzer(id, benutzer) {
     try {
@@ -128,6 +143,9 @@ async function updateBenutzer(id, benutzer) {
 ```
 
 ### Delete
+
+Das Löschen von Datensätzen sollte mit Vorsicht durchgeführt werden. Hier ist ein Beispiel für sicheres Löschen mit Fehlerbehandlung:
+
 ```javascript
 async function deleteBenutzer(id) {
     try {
@@ -145,59 +163,169 @@ async function deleteBenutzer(id) {
 
 ## Transaktionen
 
-### Transaktion mit mehreren Operationen
+### Was sind Transaktionen?
+
+Transaktionen sind eine Möglichkeit, mehrere Datenbankoperationen als eine einzige, unteilbare Einheit zu behandeln. Sie folgen dem ACID-Prinzip:
+
+- **Atomicity (Atomarität)**: Entweder werden alle Operationen erfolgreich ausgeführt oder keine.
+- **Consistency (Konsistenz)**: Die Datenbank bleibt nach der Transaktion in einem konsistenten Zustand.
+- **Isolation (Isolation)**: Gleichzeitige Transaktionen beeinflussen sich nicht gegenseitig.
+- **Durability (Dauerhaftigkeit)**: Nach erfolgreicher Transaktion sind die Änderungen permanent.
+
+### Die beginTransaction Methode
+
+Die `beginTransaction()` Methode startet eine neue Transaktion. Sie markiert den Beginn einer Reihe von Datenbankoperationen, die als Einheit behandelt werden sollen:
+
 ```javascript
-async function transferGuthaben(vonId, nachId, betrag) {
+// Beispiel einer Transaktion
+async function beispielTransaktion() {
     const connection = await pool.getConnection();
     
     try {
+        // Transaktion starten
         await connection.beginTransaction();
         
-        // Guthaben abziehen
+        // Erste Operation
+        await connection.execute(
+            'UPDATE konten SET guthaben = guthaben - 100 WHERE id = 1'
+        );
+        
+        // Zweite Operation
+        await connection.execute(
+            'UPDATE konten SET guthaben = guthaben + 100 WHERE id = 2'
+        );
+        
+        // Transaktion bestätigen
+        await connection.commit();
+        
+    } catch (error) {
+        // Bei Fehler: Transaktion rückgängig machen
+        await connection.rollback();
+        throw error;
+    } finally {
+        // Verbindung freigeben
+        connection.release();
+    }
+}
+```
+
+### Wichtige Transaktionsmethoden
+
+1. **beginTransaction()**
+   - Startet eine neue Transaktion
+   - Sperrt die betroffenen Tabellen
+   - Erstellt einen Sicherungspunkt
+
+2. **commit()**
+   - Bestätigt alle Änderungen
+   - Macht sie permanent
+   - Gibt die Sperren frei
+
+3. **rollback()**
+   - Macht alle Änderungen rückgängig
+   - Stellt den vorherigen Zustand wieder her
+   - Gibt die Sperren frei
+
+### Praktisches Beispiel: Kontotransfer
+
+```javascript
+async function sichererKontotransfer(vonKonto, nachKonto, betrag) {
+    const connection = await pool.getConnection();
+    
+    try {
+        // Transaktion starten
+        await connection.beginTransaction();
+        
+        // Kontostand prüfen
+        const [konten] = await connection.execute(
+            'SELECT guthaben FROM konten WHERE id = ? FOR UPDATE',
+            [vonKonto]
+        );
+        
+        if (konten[0].guthaben < betrag) {
+            throw new Error('Unzureichender Kontostand');
+        }
+        
+        // Geld abziehen
         await connection.execute(
             'UPDATE konten SET guthaben = guthaben - ? WHERE id = ?',
-            [betrag, vonId]
+            [betrag, vonKonto]
         );
         
-        // Guthaben hinzufügen
+        // Geld hinzufügen
         await connection.execute(
             'UPDATE konten SET guthaben = guthaben + ? WHERE id = ?',
-            [betrag, nachId]
+            [betrag, nachKonto]
         );
         
+        // Transaktion bestätigen
         await connection.commit();
         return true;
-    } catch (err) {
+        
+    } catch (error) {
+        // Bei Fehler: Transaktion rückgängig machen
         await connection.rollback();
-        console.error('Fehler bei der Transaktion:', err);
-        throw err;
+        throw error;
     } finally {
         connection.release();
     }
 }
 ```
 
+### Best Practices für Transaktionen
+
+1. **Transaktionsdauer**
+   - Transaktionen so kurz wie möglich halten
+   - Nur notwendige Operationen einschließen
+   - Lange Wartezeiten vermeiden
+
+2. **Fehlerbehandlung**
+   - Immer try-catch verwenden
+   - Rollback bei Fehlern durchführen
+   - Verbindungen immer freigeben
+
+3. **Sperren**
+   - Nur notwendige Daten sperren
+   - Sperren so kurz wie möglich halten
+   - Deadlocks vermeiden
+
+4. **Isolation Level**
+   - Passendes Isolation Level wählen
+   - READ COMMITTED für die meisten Fälle
+   - SERIALIZABLE nur wenn nötig
+
 ## Best Practices
 
 ### Verbindungsmanagement
+
+Effizientes Verbindungsmanagement ist entscheidend für die Performance und Stabilität der Anwendung:
+
 - Connection Pooling verwenden
 - Verbindungen nach Gebrauch freigeben
 - Timeouts konfigurieren
 - Fehlerbehandlung implementieren
 
 ### Performance
+
+Die Performance der Datenbankanbindung kann durch verschiedene Maßnahmen optimiert werden:
+
 - Prepared Statements nutzen
 - Indizes verwenden
 - Große Abfragen vermeiden
 - Verbindungslimit anpassen
 
 ### Sicherheit
+
+Sicherheit ist ein kritischer Aspekt bei der Datenbankanbindung. Hier sind die wichtigsten Sicherheitsaspekte:
+
 - Prepared Statements für SQL-Injection-Schutz
 - Verbindungsdaten sicher speichern
 - Benutzerrechte einschränken
 - Fehler nicht nach außen geben
 
 ## Beispiel: Benutzerverwaltung
+
+Hier sehen wir ein vollständiges Beispiel einer Benutzerverwaltung, die alle CRUD-Operationen und Best Practices implementiert:
 
 ```javascript
 import mysql from 'mysql2/promise';

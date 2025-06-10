@@ -17,18 +17,6 @@ In diesem Abschnitt lernst du die grundlegenden Konzepte der Callback-basierten 
 - Ermöglichen asynchrone Programmierung
 - Traditionelle Methode in NodeJS
 
-### Error-First Callback Pattern
-```javascript
-function operation(callback) {
-    // Asynchrone Operation
-    if (error) {
-        callback(error);
-        return;
-    }
-    callback(null, result);
-}
-```
-
 ## Callback-Patterns
 
 ### Einfache Callbacks
@@ -57,6 +45,18 @@ fs.readFile('datei1.txt', (err, data1) => {
         console.log('Beide Dateien gelesen');
     });
 });
+```
+
+### Error-First Callback Pattern
+```javascript
+function operation(callback) {
+    // Asynchrone Operation
+    if (error) {
+        callback(error);
+        return;
+    }
+    callback(null, result);
+}
 ```
 
 ## Callback-Hölle

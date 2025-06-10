@@ -4,9 +4,51 @@
 
 Profiling ist ein wichtiges Werkzeug zur Performance-Analyse und Optimierung von NodeJS-Anwendungen. In diesem Modul lernst du verschiedene Profiling-Techniken und Tools kennen.
 
+## Performance-Messung im Überblick
+
+### Vergleichstabelle der Profiling-Methoden
+
+| Methode | Vorteile | Nachteile | Beste Anwendung |
+|---------|----------|-----------|-----------------|
+| Node.js Profiler | Einfach zu starten, detaillierte CPU-Analyse | Große Log-Dateien, komplexe Auswertung | CPU-Intensive Anwendungen |
+| Chrome DevTools | Visuelle Analyse, Echtzeit-Monitoring | Overhead durch Browser-Integration | Frontend-nahe Anwendungen |
+| Heap-Snapshot | Detaillierte Memory-Analyse, Leak-Detection | Hoher Speicherverbrauch, Performance-Impact | Memory-Leak-Analyse |
+| Performance Hooks | Präzise Zeitmessung, Low-Level-Kontrolle | Manuelle Implementierung, Code-Intrusion | Spezifische Performance-Metriken |
+| V8 Profiler | Tiefe CPU-Analyse, V8-spezifische Optimierungen | Komplexe Interpretation, V8-spezifisch | V8-Optimierungen |
+
+### Profiling-Architektur
+
+```mermaid
+graph TD
+    A[Node.js Anwendung] -->|Profiling| B[Profiling Layer]
+    B -->|CPU Profiling| C[V8 Profiler]
+    B -->|Memory Profiling| D[Heap Analyzer]
+    B -->|Performance Hooks| E[Performance Metrics]
+    
+    C -->|Analyse| F[Chrome DevTools]
+    D -->|Analyse| F
+    E -->|Analyse| F
+    
+    subgraph "Profiling Tools"
+        C
+        D
+        E
+    end
+    
+    subgraph "Analyse Tools"
+        F
+    end
+    
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style B fill:#bbf,stroke:#333,stroke-width:2px
+    style F fill:#bfb,stroke:#333,stroke-width:2px
+```
+
 ## Performance-Analyse
 
 ### 1. Node.js Profiler
+
+Der Node.js Profiler ist ein eingebautes Tool für CPU-Profiling. Es erstellt detaillierte Logs der CPU-Auslastung, die später analysiert werden können:
 
 ```bash
 # CPU-Profiling starten
@@ -18,6 +60,8 @@ node --prof-process isolate-0xnnnnnnnnnnnn-v8.log > processed.txt
 
 ### 2. Chrome DevTools Profiler
 
+Chrome DevTools bietet eine benutzerfreundliche Oberfläche für die Performance-Analyse. Es ermöglicht Echtzeit-Monitoring und visuelle Darstellung der Ergebnisse:
+
 ```bash
 # Node.js mit Chrome DevTools starten
 node --inspect app.js
@@ -27,6 +71,8 @@ node --inspect app.js
 
 ### 1. Heap-Snapshot
 
+Heap-Snapshots ermöglichen eine detaillierte Analyse des Speicherverbrauchs. Sie sind besonders nützlich zur Identifizierung von Memory-Leaks:
+
 ```javascript
 import heapdump from 'heapdump';
 
@@ -35,6 +81,8 @@ heapdump.writeSnapshot('./heap-' + Date.now() + '.heapsnapshot');
 ```
 
 ### 2. Memory-Leak-Detection
+
+Die kontinuierliche Überwachung des Speicherverbrauchs hilft, potenzielle Memory-Leaks frühzeitig zu erkennen:
 
 ```javascript
 // Memory-Usage überwachen
@@ -47,6 +95,8 @@ setInterval(() => {
 ## CPU-Profiling
 
 ### 1. V8 Profiler
+
+Der V8 Profiler bietet tiefgehende Einblicke in die CPU-Auslastung und hilft bei der Optimierung von JavaScript-Code:
 
 ```javascript
 import profiler from 'v8-profiler';
@@ -64,6 +114,8 @@ setTimeout(() => {
 ```
 
 ### 2. Performance Hooks
+
+Performance Hooks ermöglichen präzise Zeitmessungen und Performance-Metriken auf niedriger Ebene:
 
 ```javascript
 import { performance, PerformanceObserver } from 'perf_hooks';
@@ -88,6 +140,8 @@ performance.measure('Operation', 'start', 'end');
 
 ### 1. Memory-Optimierung
 
+Effiziente Speichernutzung ist entscheidend für die Performance. Diese Beispiele zeigen verschiedene Strategien zur Memory-Optimierung:
+
 ```javascript
 // 1. Große Objekte vermeiden
 const cache = new Map();  // Statt großem Objekt
@@ -106,6 +160,8 @@ readStream.pipe(writeStream);
 
 ### 2. CPU-Optimierung
 
+CPU-Optimierungen können die Performance erheblich verbessern. Hier werden verschiedene Ansätze demonstriert:
+
 ```javascript
 // 1. Asynchrone Operationen
 async function processData(data) {
@@ -120,7 +176,7 @@ worker.postMessage({ data: heavyComputation });
 
 ## Übung: Performance-Analyse
 
-Analysiere und optimiere den folgenden Code:
+Die folgende Übung demonstriert die Optimierung eines ineffizienten Algorithmus. Wir vergleichen verschiedene Implementierungen und deren Performance:
 
 ```javascript
 function processLargeArray(array) {

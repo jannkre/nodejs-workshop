@@ -9,6 +9,60 @@ In diesem Abschnitt lernst du, wie man einen einfachen HTTP-Server mit NodeJS im
 - Routing implementieren
 - Statische Dateien ausliefern
 
+## HTTP-Methoden und Funktionalitäten
+
+### Übersicht der HTTP-Methoden
+
+| Methode | Beschreibung | Typische Verwendung |
+|---------|--------------|---------------------|
+| GET | Daten abrufen | Seitenaufruf, API-Abfragen |
+| POST | Daten senden | Formulare, API-Daten |
+| PUT | Ressource aktualisieren | API-Updates |
+| DELETE | Ressource löschen | API-Löschoperationen |
+| PATCH | Teilaktualisierung | API-Teilupdates |
+| HEAD | Header abrufen | Status-Checks |
+| OPTIONS | Verfügbare Optionen | CORS, API-Dokumentation |
+
+### Wichtige HTTP-Header
+
+Die HTTP-Header sind ein zentraler Bestandteil der HTTP-Kommunikation. Sie enthalten Metadaten über die Anfrage oder Antwort. Hier sind einige häufig verwendete Header als Beispiele:
+
+| Header | Beschreibung | Beispiel |
+|--------|--------------|----------|
+| Content-Type | Art der Daten | text/html, application/json |
+| Content-Length | Größe der Daten | 1024 |
+| Location | Weiterleitung | /neue-seite |
+| Set-Cookie | Cookie setzen | session=abc123 |
+| Authorization | Authentifizierung | Bearer token123 |
+
+Es gibt viele weitere Header, die je nach Anwendungsfall verwendet werden können. Die hier aufgeführten sind nur eine Auswahl der am häufigsten verwendeten Header.
+
+## HTTP-Server Flow
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Server
+    participant Router
+    participant Handler
+    participant FileSystem
+
+    Client->>Server: HTTP Request
+    Server->>Router: Request verarbeiten
+    Router->>Handler: Route zuweisen
+    
+    alt Statische Datei
+        Handler->>FileSystem: Datei lesen
+        FileSystem-->>Handler: Dateiinhalt
+        Handler-->>Server: Response
+    else API-Endpunkt
+        Handler->>Handler: Daten verarbeiten
+        Handler-->>Server: Response
+    end
+    
+    Server-->>Client: HTTP Response
+```
+
 ## Grundlegender HTTP-Server
 
 ### Server erstellen

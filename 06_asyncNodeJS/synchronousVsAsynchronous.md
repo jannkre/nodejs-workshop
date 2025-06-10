@@ -56,33 +56,97 @@ console.log('Dies wird sofort ausgeführt');
 - Datei-Uploads/Downloads
 - API-Aufrufe
 
+
+### Visualisierung des Programmablaufs
+
+```mermaid
+graph TD
+    subgraph "Synchrone Programmierung"
+        A1[Start] --> B1[Operation 1]
+        B1 --> C1[Operation 2]
+        C1 --> D1[Operation 3]
+        D1 --> E1[Ende]
+        
+        style A1 fill:#f9f,stroke:#333,stroke-width:2px
+        style B1 fill:#bbf,stroke:#333,stroke-width:2px
+        style C1 fill:#bbf,stroke:#333,stroke-width:2px
+        style D1 fill:#bbf,stroke:#333,stroke-width:2px
+        style E1 fill:#bfb,stroke:#333,stroke-width:2px
+    end
+
+    subgraph "Asynchrone Programmierung"
+        A2[Start] --> B2[Operation 1]
+        A2 --> C2[Operation 2]
+        A2 --> D2[Operation 3]
+        B2 --> E2[Callback 1]
+        C2 --> F2[Callback 2]
+        D2 --> G2[Callback 3]
+        E2 --> H2[Ende]
+        F2 --> H2
+        G2 --> H2
+        
+        style A2 fill:#f9f,stroke:#333,stroke-width:2px
+        style B2 fill:#bbf,stroke:#333,stroke-width:2px
+        style C2 fill:#bbf,stroke:#333,stroke-width:2px
+        style D2 fill:#bbf,stroke:#333,stroke-width:2px
+        style E2 fill:#fbb,stroke:#333,stroke-width:2px
+        style F2 fill:#fbb,stroke:#333,stroke-width:2px
+        style G2 fill:#fbb,stroke:#333,stroke-width:2px
+        style H2 fill:#bfb,stroke:#333,stroke-width:2px
+    end
+```
+
+Das Diagramm zeigt den grundlegenden Unterschied zwischen synchroner und asynchroner Programmierung:
+
+**Synchrone Programmierung:**
+- Operationen werden nacheinander ausgeführt
+- Jede Operation muss abgeschlossen sein, bevor die nächste beginnt
+- Klare, vorhersehbare Ausführungsreihenfolge
+
+**Asynchrone Programmierung:**
+- Operationen können parallel gestartet werden
+- Callbacks werden ausgeführt, sobald die jeweilige Operation abgeschlossen ist
+- Flexiblere, aber komplexere Ausführungsreihenfolge
+
+
 ## Vorteile und Nachteile
 
-### Synchrone Programmierung
-#### Vorteile
-- Einfacher zu verstehen
-- Vorhersehbare Ausführung
-- Einfachere Fehlerbehandlung
-- Debugging ist einfacher
+### Vergleichstabelle: Synchrone vs. Asynchrone Programmierung
 
-#### Nachteile
-- Blockierende Operationen
-- Schlechte Performance bei I/O
-- Skalierungsprobleme
-- Ressourcenineffizient
+| Aspekt | Synchrone Programmierung | Asynchrone Programmierung |
+|--------|--------------------------|---------------------------|
+| **Verständlichkeit** | ✅ Einfacher zu verstehen und zu debuggen | ❌ Komplexere Programmstruktur |
+| **Ausführung** | ✅ Vorhersehbare, sequentielle Ausführung | ✅ Parallele Verarbeitung möglich |
+| **Performance** | ❌ Blockierende Operationen | ✅ Bessere Performance bei I/O |
+| **Ressourcennutzung** | ❌ Ineffiziente Ressourcennutzung | ✅ Effiziente Ressourcennutzung |
+| **Skalierbarkeit** | ❌ Begrenzte Skalierbarkeit | ✅ Gute Skalierbarkeit |
+| **Fehlerbehandlung** | ✅ Einfachere Fehlerbehandlung | ❌ Komplexere Fehlerbehandlung |
+| **Debugging** | ✅ Einfacher zu debuggen | ❌ Schwierigeres Debugging |
+| **Lernkurve** | ✅ Flache Lernkurve | ❌ Steilere Lernkurve |
 
-### Asynchrone Programmierung
-#### Vorteile
-- Bessere Performance
-- Effiziente Ressourcennutzung
-- Gute Skalierbarkeit
-- Ideal für I/O-Operationen
+### Anwendungsfälle im Vergleich
 
-#### Nachteile
-- Komplexere Programmstruktur
-- Callback-Hölle möglich
-- Schwierigeres Debugging
-- Steilere Lernkurve
+| Anwendungsfall | Synchrone Programmierung | Asynchrone Programmierung |
+|----------------|--------------------------|---------------------------|
+| **Web-Server** | ❌ Nicht geeignet | ✅ Ideal |
+| **Datenbank-Operationen** | ❌ Nicht geeignet | ✅ Ideal |
+| **Datei-Uploads** | ❌ Nicht geeignet | ✅ Ideal |
+| **API-Aufrufe** | ❌ Nicht geeignet | ✅ Ideal |
+| **Konfigurationsdateien** | ✅ Geeignet | ⚠️ Möglich, aber Overkill |
+| **Kleine Dateioperationen** | ✅ Geeignet | ⚠️ Möglich, aber Overkill |
+| **Berechnungsintensive Tasks** | ✅ Geeignet | ⚠️ Möglich, aber Overkill |
+| **Einfache Skripte** | ✅ Geeignet | ⚠️ Möglich, aber Overkill |
+
+### Performance-Aspekte
+
+| Aspekt | Synchrone Programmierung | Asynchrone Programmierung |
+|--------|--------------------------|---------------------------|
+| **I/O-Operationen** | ❌ Blockiert den Event Loop | ✅ Nicht-blockierend |
+| **CPU-Intensive Tasks** | ✅ Direkte Ausführung | ⚠️ Kann Event Loop blockieren |
+| **Memory-Usage** | ✅ Vorhersehbar | ⚠️ Kann höher sein |
+| **Response-Time** | ❌ Kann lang sein | ✅ Schnelle Initial-Response |
+| **Parallelverarbeitung** | ❌ Nicht möglich | ✅ Effizient möglich |
+
 
 ## Best Practices
 

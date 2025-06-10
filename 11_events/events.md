@@ -9,9 +9,44 @@ In diesem Abschnitt lernst du die Grundlagen der Event-basierten Programmierung 
 - Event-basierte Architektur implementieren
 - Best Practices für Event-Handling
 
+## Event-Architektur
+
+Die folgende Abbildung zeigt, wie eine typische Event-basierte Architektur in einer Node.js-Anwendung aussehen kann:
+
+```mermaid
+graph TD
+    A[Event Emitter] -->|emits| B[Event Bus]
+    B -->|notifies| C[Module 1]
+    B -->|notifies| D[Module 2]
+    B -->|notifies| E[Module 3]
+    
+    C -->|publishes| B
+    D -->|publishes| B
+    E -->|publishes| B
+    
+    subgraph "Event Bus"
+        B
+    end
+    
+    subgraph "Event Listener"
+        C
+        D
+        E
+    end
+    
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style B fill:#bbf,stroke:#333,stroke-width:2px
+    style C fill:#bfb,stroke:#333,stroke-width:2px
+    style D fill:#bfb,stroke:#333,stroke-width:2px
+    style E fill:#bfb,stroke:#333,stroke-width:2px
+```
+
 ## Grundlagen
 
 ### Event Emitter importieren
+
+Der Event Emitter ist ein zentrales Modul in Node.js für die Event-basierte Programmierung. Er ermöglicht das Erstellen und Verarbeiten von Events:
+
 ```javascript
 import { EventEmitter } from 'events';
 ```
@@ -19,6 +54,9 @@ import { EventEmitter } from 'events';
 ## Event Emitter
 
 ### Basis-Event Emitter
+
+Ein einfacher Event Emitter demonstriert die grundlegende Funktionsweise: Ein Event wird ausgelöst und von einem Listener empfangen:
+
 ```javascript
 import { EventEmitter } from 'events';
 
@@ -35,6 +73,9 @@ emitter.emit('event', { message: 'Hallo Welt' });
 ```
 
 ### Mehrere Listener
+
+Ein Event kann von mehreren Listenern empfangen werden. Diese werden in der Reihenfolge ihrer Registrierung ausgeführt:
+
 ```javascript
 import { EventEmitter } from 'events';
 
@@ -57,6 +98,9 @@ emitter.emit('event', 'Test');
 ## Eigene Event Emitter
 
 ### Klasse mit Events
+
+Durch Erweitern der EventEmitter-Klasse können eigene Klassen mit Event-Funktionalität erstellt werden. Dies ermöglicht eine lose Kopplung zwischen verschiedenen Teilen der Anwendung:
+
 ```javascript
 import { EventEmitter } from 'events';
 
@@ -95,6 +139,9 @@ userManager.on('userRemoved', (user) => {
 ## Event-Handling
 
 ### Einmalige Events
+
+Mit `once` können Events registriert werden, die nur einmal ausgeführt werden. Dies ist nützlich für einmalige Aktionen oder Initialisierungen:
+
 ```javascript
 import { EventEmitter } from 'events';
 
@@ -110,6 +157,9 @@ emitter.emit('event', 'Zweites Event'); // Wird ignoriert
 ```
 
 ### Event-Entfernung
+
+Events können dynamisch entfernt werden, wenn sie nicht mehr benötigt werden. Dies ist wichtig für die Vermeidung von Memory Leaks:
+
 ```javascript
 import { EventEmitter } from 'events';
 
@@ -129,18 +179,27 @@ emitter.off('event', eventHandler);
 ## Best Practices
 
 ### Fehlerbehandlung
+
+Eine robuste Fehlerbehandlung ist in Event-basierten Systemen besonders wichtig, da Events asynchron verarbeitet werden:
+
 - Error-Events implementieren
 - Try-Catch in Event-Handlern
 - Fehler propagieren
 - Ressourcen aufräumen
 
 ### Performance
+
+Die Performance von Event-basierten Systemen hängt stark von der effizienten Implementierung ab:
+
 - Listener-Limit beachten
 - Unnötige Events vermeiden
 - Event-Queue optimieren
 - Memory Leaks verhindern
 
 ### Code-Organisation
+
+Eine gute Strukturierung des Event-basierten Codes ist entscheidend für die Wartbarkeit:
+
 - Events dokumentieren
 - Handler modular aufbauen
 - Event-Namen standardisieren
@@ -149,6 +208,9 @@ emitter.off('event', eventHandler);
 ## Beispiele
 
 ### Chat-System
+
+Ein Chat-System demonstriert die praktische Anwendung von Events in einer Echtzeit-Anwendung:
+
 ```javascript
 import { EventEmitter } from 'events';
 
@@ -194,6 +256,9 @@ chat.on('userLeft', (user) => {
 ```
 
 ### Datei-Watcher
+
+Ein Datei-Watcher zeigt, wie Events für die Überwachung von Dateisystem-Änderungen genutzt werden können:
+
 ```javascript
 import { EventEmitter } from 'events';
 import { watch } from 'fs';
@@ -234,7 +299,3 @@ watcher.on('stopped', () => {
     console.log('Watcher gestoppt');
 });
 ```
-
-## Nächste Schritte
-
-Nachdem du die Event-basierte Programmierung in NodeJS kennengelernt hast, kannst du mit dem [Streams](streams.md) Modul fortfahren, um die Verarbeitung von Datenströmen zu lernen. 
