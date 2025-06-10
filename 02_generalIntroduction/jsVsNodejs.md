@@ -39,6 +39,22 @@ NodeJS ist eine Laufzeitumgebung für JavaScript außerhalb des Browsers. Sie bi
 - JavaScript: ES6 Modules
 - NodeJS: CommonJS und ES6 Modules
 
+## Vergleichstabelle
+
+| Aspekt | JavaScript (Browser) | NodeJS |
+|--------|---------------------|---------|
+| Ausführungsumgebung | Browser | Server/Desktop |
+| Globale Objekte | `window`, `document` | `global`, `process` |
+| Dateisystem-Zugriff | Nein | Ja (`fs` Modul) |
+| Netzwerk | HTTP/HTTPS, WebSocket | Alle Protokolle (TCP, UDP, HTTP, WebSocket, etc.) |
+| Module | ES6 Modules | CommonJS + ES6 Modules |
+| DOM-Zugriff | Ja | Nein |
+| Package Manager | Keiner | npm/yarn |
+| Debugging | Browser DevTools | Node Inspector |
+| Performance | Browser-optimiert | Server-optimiert |
+| Sicherheit | Sandboxed | System-Zugriff |
+| Einsatzgebiet | Frontend | Backend/CLI |
+
 ## Gemeinsamkeiten
 
 - Gleiche Sprachsyntax

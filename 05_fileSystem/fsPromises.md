@@ -212,7 +212,3 @@ async function getDirectoryStructure(dir) {
     }
 }
 ```
-
-## Nächste Schritte
-
-Nachdem du die Promise-basierte API für Dateisystem-Operationen kennengelernt hast, kannst du mit dem [Events](events.md) Modul fortfahren, um die Event-basierte Programmierung in NodeJS zu lernen. 

@@ -1,13 +1,11 @@
 
 TODO WS CONTENT:
-- optional: gen/exec 09_typescript exercise
-
-TODO SETUP:
 - branching the content for first day
 - information listing for quick start on wednesday (database information, github repo, vs code extension to install)
-- rework event loop async information (course content)
+- rework event loop async information (course content) (wieviele worker werden zugewiesen und wie funktionert das mit memory, etc.)
 - recheck and make content nicer
-
+- content include .env files
+- optional: gen/exec 09_typescript exercise
 
 
 
@@ -32,8 +30,8 @@ Erkundung des Modulsystems in NodeJS, einschließlich npm, Paketverwaltung und E
 ### 5. Filesystem Nutzung
 Lernen über Dateisystem-Operationen und deren Handhabung in NodeJS.
 
-### 6. Events registrieren und verarbeiten
-Verständnis der ereignisgesteuerten Programmierung in NodeJS.
+### 6. Asynchrone Tasks in NodeJS
+Verstehen von Asnychronität in NodeJS Anwendungen und speziell Web-Servern
 
 ### 7. NodeJS als Webserver
 Entwicklung und Implementierung verschiedener Arten von Webservern mit NodeJS.
@@ -47,7 +45,10 @@ Einführung in TypeScript, Typisierung in NodeJS, Konfiguration und Best Practic
 ### 10. Advanced Web Server
 Fortgeschrittene Webserver-Konzepte und Implementierungen.
 
-### 11. Debugging & Testing
+### 11. Events registrieren und verarbeiten
+Verständnis der ereignisgesteuerten Programmierung in NodeJS.
+
+### 12. Debugging & Testing
 Best Practices für das Debugging und Testen von NodeJS-Anwendungen.
 
 ## Erste Schritte

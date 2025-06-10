@@ -29,6 +29,17 @@ In diesem Abschnitt lernst du, wie NodeJS als Webserver-Umgebung im modernen Web
 - Rust: Systemnahe, sicher
 - Deno: NodeJS-Nachfolger, moderner
 
+### Vergleichstabelle
+
+| Technologie | Kernstärken | Hauptherausforderungen | Beste Einsatzgebiete |
+|------------|-------------|------------------------|---------------------|
+| NodeJS | - Non-blocking I/O<br>- JavaScript Full-Stack<br>- Schnelle Entwicklung | - CPU-Last<br>- Async-Komplexität | - APIs & Microservices<br>- Echtzeit-Apps |
+| PHP/Apache | - Einfachheit<br>- Hosting-Verfügbarkeit | - Blocking I/O<br>- Skalierung | - Webseiten<br>- CMS |
+| Java/Spring | - Enterprise-Features<br>- Stabilität | - Hoher RAM-Verbrauch<br>- Komplexität | - Enterprise-Systeme<br>- Finanz-Apps |
+| Python/Django | - Entwicklungsgeschwindigkeit<br>- Data Science | - GIL-Bottleneck<br>- I/O-Latenz | - Data-Backends<br>- Prototypen |
+| Go | - Native Threading<br>- Deployment | - Ökosystem<br>- Web-Fokus | - Cloud-Native<br>- High-Perf APIs |
+| Rust | - Zero-Cost Abstractions<br>- Systemnähe | - Lernkurve<br>- Entwicklungszeit | - Systemnahe Dienste<br>- Safety-Critical |
+
 ## Stärken von NodeJS
 
 ### Vorteile
@@ -59,6 +70,39 @@ In diesem Abschnitt lernst du, wie NodeJS als Webserver-Umgebung im modernen Web
 - Schwergewichtige Backend-Systeme
 
 ## Ökosystem
+
+### NodeJS Ökosystem-Visualisierung
+
+```mermaid
+graph TB
+    NodeJS[NodeJS Core] --> Express[Express.js]
+    NodeJS --> NestJS[NestJS]
+    NodeJS --> Fastify[Fastify]
+    NodeJS --> Koa[Koa.js]
+    
+    Express --> ExpressUse[Web APIs<br>Middleware<br>Routing]
+    NestJS --> NestUse[Enterprise Apps<br>TypeScript<br>Architecture]
+    Fastify --> FastUse[High Performance<br>Low Overhead<br>Schema Validation]
+    Koa --> KoaUse[Modern Middleware<br>Async/Await<br>Lightweight]
+    
+    Express --> ExpressEco[Express Ecosystem]
+    NestJS --> NestEco[NestJS Ecosystem]
+    Fastify --> FastEco[Fastify Plugins]
+    Koa --> KoaEco[Koa Ecosystem]
+    
+    ExpressEco --> Common[Common Tools]
+    NestEco --> Common
+    FastEco --> Common
+    KoaEco --> Common
+    
+    Common --> Tools[TypeScript<br>Testing<br>Documentation<br>Deployment]
+    
+    style NodeJS fill:#68a063,stroke:#333,stroke-width:2px
+    style Express fill:#f7df1e,stroke:#333,stroke-width:2px
+    style NestJS fill:#e0234e,stroke:#333,stroke-width:2px
+    style Fastify fill:#00a0e9,stroke:#333,stroke-width:2px
+    style Koa fill:#8e44ad,stroke:#333,stroke-width:2px
+```
 
 ### Beliebte Frameworks
 - Express.js: Minimalistisch

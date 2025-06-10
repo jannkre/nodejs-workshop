@@ -23,16 +23,33 @@ app.get('/', (req, res) => {
 app.listen(3000);
 ```
 
-### Fastify
+## Umgebungsvariablen & Konfiguration
+
+### dotenv
 ```javascript
-import Fastify from 'fastify';
-const fastify = Fastify();
+import dotenv from 'dotenv';
+dotenv.config();
 
-fastify.get('/', async (request, reply) => {
-    return { hello: 'welt' };
-});
+// Zugriff auf Umgebungsvariablen
+const dbUrl = process.env.DATABASE_URL;
+const apiKey = process.env.API_KEY;
+```
 
-fastify.listen(3000);
+### config
+```javascript
+import config from 'config';
+
+// Konfiguration aus verschiedenen Umgebungen
+const dbConfig = config.get('database');
+const serverConfig = config.get('server');
+
+// Beispiel: config/default.json
+// {
+//   "database": {
+//     "host": "localhost",
+//     "port": 5432
+//   }
+// }
 ```
 
 ## Datenbank-Integration
@@ -84,20 +101,22 @@ const morgen = moment().add(1, 'days');
 
 ## Sicherheit
 
-### Helmet
-```javascript
-import express from 'express';
-import helmet from 'helmet';
-const app = express();
-
-app.use(helmet());
-```
-
 ### JWT
 ```javascript
 import jwt from 'jsonwebtoken';
 
 const token = jwt.sign({ userId: 123 }, 'geheim');
+```
+
+### bcrypt
+```javascript
+import bcrypt from 'bcrypt';
+
+// Passwort hashen
+const hashedPassword = await bcrypt.hash('myPassword', 10);
+
+// Passwort verifizieren
+const isMatch = await bcrypt.compare('myPassword', hashedPassword);
 ```
 
 ## HTTP/Network
@@ -122,6 +141,64 @@ const postResponse = await fetch('https://api.example.com/users', {
     })
 });
 ```
+
+## Best Practices
+
+- Regelmäßige Updates
+- Sicherheitsaudits
+- Performance-Monitoring
+- Dokumentation lesen
+- Lizenzprüfung
+
+
+## Weitere nützliche Module
+
+| Kategorie | Modul | Beschreibung | Typische Anwendung |
+|-----------|-------|--------------|-------------------|
+| **Datei-Operationen** | multer | Middleware für Datei-Uploads | Formulare mit Datei-Upload |
+| | sharp | Bildverarbeitung und -optimierung | Bildgrößen anpassen, Formate konvertieren |
+| | csv-parser | CSV-Dateien verarbeiten | Datenimport/Export |
+| | exceljs | Excel-Dateien erstellen und lesen | Berichte generieren |
+| **Validierung & Formatierung** | validator | String-Validierung und -Sanitization | Formularvalidierung |
+| | date-fns | Moderne Datums-Manipulation | Datumsberechnungen |
+| | uuid | Generierung von eindeutigen IDs | Datenbank-Primary-Keys |
+| | chalk | Farbige Konsolenausgaben | CLI-Tools |
+| **Entwicklung & Testing** | nodemon | Automatischer Neustart bei Änderungen | Entwicklung |
+| | mocha | Test-Framework | Unit-Tests |
+| | chai | Assertion-Bibliothek | Test-Assertions |
+| | supertest | HTTP-Testing | API-Tests |
+| **Performance & Caching** | compression | Gzip-Komprimierung | Response-Optimierung |
+| | redis | In-Memory-Datenbank | Caching, Session-Management |
+| | node-cache | Einfaches In-Memory-Caching | Lokales Caching |
+| | bull | Job-Queue und Background-Processing | Asynchrone Tasks |
+| **Logging & Monitoring** | morgan | HTTP-Request-Logging | Access-Logs |
+| | debug | Debugging-Tool | Entwicklung |
+| | newrelic | Application Performance Monitoring | Performance-Tracking |
+| | sentry | Error-Tracking | Fehlerüberwachung |
+| **API & Integration** | swagger-ui-express | API-Dokumentation | API-Docs |
+| | socket.io | Echtzeit-Kommunikation | Chat, Live-Updates |
+| | nodemailer | E-Mail-Versand | E-Mail-Versand |
+| | stripe | Payment-Processing | Zahlungsabwicklung |
+| **Sicherheit** | cors | Cross-Origin Resource Sharing | API-Sicherheit |
+| | rate-limiter-flexible | Rate-Limiting | DDoS-Schutz |
+| | sanitize-html | HTML-Sanitization | XSS-Schutz |
+| | express-rate-limit | Request-Limiting | API-Limits |
+| **Datenverarbeitung** | cheerio | HTML-Parsing und -Manipulation | Web-Scraping |
+| | xml2js | XML-Parsing | XML-Verarbeitung |
+| | jsdom | DOM-Manipulation | Server-seitiges DOM |
+| | pdfkit | PDF-Generierung | PDF-Erstellung |
+| **Deployment & DevOps** | pm2 | Process Manager | Production-Deployment |
+| | cross-env | Cross-Platform Umgebungsvariablen | Umgebungsvariablen |
+| | husky | Git Hooks | Pre-commit Checks |
+| | dotenv-cli | CLI für dotenv | Umgebungsvariablen-CLI |
+| **Datenbank-Tools** | knex | SQL Query Builder | Datenbankabfragen |
+| | typeorm | TypeScript ORM | TypeScript-Projekte |
+| | mongoose-paginate-v2 | Pagination für Mongoose | MongoDB-Pagination |
+| | sequelize-cli | CLI für Sequelize | Datenbank-Migrationen |
+| **Utility & Helper** | commander | CLI-Argument-Parsing | CLI-Tools |
+| | inquirer | Interaktive CLI | Benutzerinteraktion |
+| | ora | Elegante Terminal-Spinner | Ladeanimationen |
+| | boxen | Boxen in der Konsole | Konsolenausgaben |
 
 ## Best Practices
 

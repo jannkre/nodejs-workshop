@@ -11,23 +11,23 @@ const server = http.createServer(async (req, res) => {
     res.end("Hello World");
   }
   else if (req.url === "/api/presidents/image") {
-  if (req.method === 'GET') {
-    const query = req.url.split("?")[1];
-    const id = query.split("=")[1];
-    const filePath = join(process.cwd(), 'files', `president_${id}.jpg`);
-    
-    try {
-      const imageBuffer = await readFile(filePath);
-      res.writeHead(200, { 'Content-Type': 'image/jpeg' });
-      res.end(imageBuffer);
-    } catch (error) {
-      res.writeHead(404, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ error: 'Image not found' }));
+    if (req.method === 'GET') {
+      const query = req.url.split("?")[1];
+      const id = query.split("=")[1];
+      const filePath = join(process.cwd(), 'files', `president_${id}.jpg`);
+      
+      try {
+        const imageBuffer = await readFile(filePath);
+        res.writeHead(200, { 'Content-Type': 'image/jpeg' });
+        res.end(imageBuffer);
+      } catch (error) {
+        res.writeHead(404, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Image not found' }));
+      }
+    } else {
+      res.writeHead(405, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Method not allowed' }));
     }
-  } else {
-    res.writeHead(405, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ error: 'Method not allowed' }));
-  }
   }
   else if (req.url === "/api/presidents") {
     if (req.method === 'POST') {

@@ -49,6 +49,21 @@ process.env.NODE_ENV = 'development';
 - Dokumentiere benötigte Umgebungsvariablen
 - Validiere die Anwesenheit wichtiger Variablen
 
+## Häufig verwendete Umgebungsvariablen
+
+| Variable | Beschreibung | Beispielwert | Verwendung |
+|----------|--------------|--------------|------------|
+| `NODE_ENV` | Laufzeitumgebung | `development`<br>`production`<br>`test` | Unterscheidung zwischen Entwicklungs- und Produktionsumgebung |
+| `PORT` | Server-Port | `3000`<br>`8080` | Port-Konfiguration für Web-Server |
+| `DATABASE_URL` | Datenbankverbindung | `postgresql://user:pass@localhost:5432/db` | Verbindungsstring für Datenbanken |
+| `API_KEY` | API-Schlüssel | `sk_live_...` | Authentifizierung bei externen APIs |
+| `JWT_SECRET` | JWT Signaturschlüssel | `your-secret-key` | Token-Generierung und -Validierung |
+| `REDIS_URL` | Redis Verbindung | `redis://localhost:6379` | Cache-Server Verbindung |
+| `AWS_ACCESS_KEY_ID` | AWS Credentials | `AKIA...` | Cloud-Service Authentifizierung |
+| `LOG_LEVEL` | Logging-Level | `debug`<br>`info`<br>`error` | Steuerung der Log-Ausgabe |
+| `CORS_ORIGIN` | CORS Einstellungen | `http://localhost:3000` | Cross-Origin Resource Sharing |
+| `SMTP_HOST` | Mail-Server | `smtp.gmail.com` | E-Mail-Versand Konfiguration |
+
 ## Beispiel mit Validierung
 
 ```javascript

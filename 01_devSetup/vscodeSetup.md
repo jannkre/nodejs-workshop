@@ -2,8 +2,6 @@
 
 In diesem Abschnitt lernst du, wie du Visual Studio Code für die NodeJS-Entwicklung optimal einrichtest.
 
-## Lernziele
-
 - Installation von VS Code
 - Konfiguration der wichtigsten Einstellungen
 - Installation und Einrichtung wichtiger Extensions
@@ -36,6 +34,13 @@ In diesem Abschnitt lernst du, wie du Visual Studio Code für die NodeJS-Entwick
     "files.eol": "\n"
 }
 ```
+
+## Datenbank-Credentials
+
+Host: database-ws.c4ebb30pq7wf.eu-central-1.rds.amazonaws.com
+User: admin
+Password: nodejs-workshop
+Datenbank: ws-db
 
 ## Nächste Schritte
 

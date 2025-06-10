@@ -4,7 +4,6 @@ In diesem Modul lernst du alles über das Modulsystem in NodeJS und wie du es ef
 
 ## Inhalte
 
-- [npm & package.json](npmAndPackageJson.md)
 - [Module System](moduleSystem.md)
-- [Eigene Module](customModules.md)
+- [npm & package.json](npmAndPackageJson.md)
 - [Populäre Module](popularModules.md) 
