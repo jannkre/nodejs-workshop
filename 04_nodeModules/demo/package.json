@@ -1,0 +1,16 @@
+{
+  "name": "demo",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "prod": "NODE_ENV=production node main.mjs",
+    "dev": "NODE_ENV=development node main.mjs"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "chalk": "^5.4.1",
+    "node-fetch": "^2.7.0"
+  }
+}
