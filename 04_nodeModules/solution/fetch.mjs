@@ -4,7 +4,15 @@ import { DEFAULT_SEARCH_TERM } from "./lib/constants.mjs";
 
 
 const resp = await fetch("https://api.sampleapis.com/presidents/presidents");
-const json = await resp.json();
+
+console.log(resp.ok);
+console.log(resp.status);
+console.log(await resp.arrayBuffer())
+process.exit(0);
+
+const buffer = Buffer.from(await resp.arrayBuffer());
+// writeFileSync("./presidents.json", buffer);
+
 
 // const resp2 = await fetch("https://api.sampleapis.com/presidents/presidents/lincoln.png");
 // const blob = await resp2.arrayBuffer();
