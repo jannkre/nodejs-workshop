@@ -1,6 +1,6 @@
 import express from 'express';
 import fetch from "node-fetch";
-import { writeFile, statfs } from 'fs/promises';
+import { writeFile, statfs, readFile } from 'fs/promises';
 import { join } from 'path';
 import filterByName from "./lib/filterAPIResponse.mjs";
 
