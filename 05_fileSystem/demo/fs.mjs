@@ -1,3 +1,7 @@
+import 'dotenv/config'
+
+console.log(process.env);
+process.exit(0);
 
 import { readFile } from "fs/promises";
 import { readFileSync, writeFileSync } from "fs";
