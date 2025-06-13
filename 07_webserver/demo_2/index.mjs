@@ -58,12 +58,11 @@ let server = http.createServer(async (req, res) => {
         if (req.method === "PUT") 
         {
             req.on("data", async (data) => {
-
                 let s3 = new S3({
                     region: "eu-central-1",
                     credentials: {
-                        accessKeyId: null,
-                        secretAccessKey: null
+                        accessKeyId: process.env.AWS_SECRET,
+                        secretAccessKey: process.env.AWS_ID
                     }
                 });
                 await s3.putObject({
@@ -79,7 +78,7 @@ let server = http.createServer(async (req, res) => {
             });
         }
         else if (req.method === "GET") {
-            readFile(`./files/${url.searchParams.get("id")}.jpg`, async(err, data) => {
+            readFile(`./files/${url.searchParams.get("id")}.jpg`, async (err, data) => {
                 if (err) {
                     await fetch("https://api.sampleapis.com/presidents/presidents");
                     let data = await resp.json();
