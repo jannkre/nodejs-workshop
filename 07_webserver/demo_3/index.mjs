@@ -6,6 +6,7 @@ app.use(express.json());
 
 app.get("/user/:name", (req, res) => {
     console.log(req.query, req.params);
+
     res.send("Hello World");
 });
 
